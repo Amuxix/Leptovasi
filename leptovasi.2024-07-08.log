@@ -1,0 +1,31 @@
+2024-07-08 22:44:19.202 [io-compute-7         ] DEBUG leptovasi.Leptovasi - Device attached Device(ZSA Technology Labs Moonlander Mark I)
+2024-07-08 22:44:19.204 [io-compute-7         ] TRACE leptovasi.Leptovasi - Full message LC0
+2024-07-08 22:44:19.205 [io-compute-7         ] TRACE leptovasi.Leptovasi - Handling message LC0
+2024-07-08 22:44:19.207 [io-compute-7         ] DEBUG leptovasi.Leptovasi - Updating current layer to Base
+2024-07-08 22:46:44.123 [io-compute-8         ] INFO  leptovasi.Leptovasi - Adding notepad to Base
+2024-07-08 22:47:17.534 [io-compute-blocker-10] TRACE leptovasi.Leptovasi - Full message LS0
+2024-07-08 22:47:17.535 [io-compute-blocker-10] TRACE leptovasi.Leptovasi - Handling message LS0
+2024-07-08 22:47:54.724 [io-compute-1         ] INFO  leptovasi.Leptovasi - Adding powershell to Base
+2024-07-08 22:48:23.171 [io-compute-blocker-6 ] TRACE leptovasi.Leptovasi - Full message LS0
+2024-07-08 22:59:27.729 [io-compute-0         ] DEBUG leptovasi.Leptovasi - Device attached Device(ZSA Technology Labs Moonlander Mark I)
+2024-07-08 22:59:27.730 [io-compute-0         ] TRACE leptovasi.Leptovasi - Full message LC0
+2024-07-08 22:59:27.730 [io-compute-0         ] TRACE leptovasi.Leptovasi - Handling message LC0
+2024-07-08 22:59:27.732 [io-compute-0         ] DEBUG leptovasi.Leptovasi - Updating current layer to Base
+2024-07-08 22:59:58.318 [io-compute-blocker-12] TRACE leptovasi.Leptovasi - Full message LS1
+2024-07-08 22:59:58.318 [io-compute-blocker-12] TRACE leptovasi.Leptovasi - Handling message LS1
+2024-07-08 22:59:58.321 [io-compute-blocker-12] INFO  leptovasi.Leptovasi - Changing idea64 from Base to CanaryGaming
+2024-07-08 22:59:58.354 [io-compute-blocker-1 ] TRACE leptovasi.Leptovasi - Full message LS1
+2024-07-08 22:59:58.448 [io-compute-9         ] INFO  leptovasi.Leptovasi - Changing to CanaryGaming for idea64
+2024-07-08 22:59:58.460 [io-compute-blocker-5 ] TRACE leptovasi.Leptovasi - Full message LS1
+2024-07-08 22:59:58.461 [io-compute-blocker-4 ] TRACE leptovasi.Leptovasi - Full message LC1
+2024-07-08 22:59:58.462 [io-compute-blocker-4 ] TRACE leptovasi.Leptovasi - Handling message LC1
+2024-07-08 22:59:58.462 [io-compute-blocker-4 ] DEBUG leptovasi.Leptovasi - Updating current layer to CanaryGaming
+2024-07-08 23:00:00.170 [io-compute-blocker-10] TRACE leptovasi.Leptovasi - Full message LS0
+2024-07-08 23:00:00.170 [io-compute-blocker-10] TRACE leptovasi.Leptovasi - Handling message LS0
+2024-07-08 23:00:00.170 [io-compute-blocker-10] INFO  leptovasi.Leptovasi - Changing idea64 from CanaryGaming to Base
+2024-07-08 23:00:00.171 [io-compute-blocker-9 ] TRACE leptovasi.Leptovasi - Full message LS0
+2024-07-08 23:00:00.244 [io-compute-8         ] INFO  leptovasi.Leptovasi - Changing to Base for idea64
+2024-07-08 23:00:00.255 [io-compute-blocker-5 ] TRACE leptovasi.Leptovasi - Full message LS0
+2024-07-08 23:00:00.256 [io-compute-blocker-1 ] TRACE leptovasi.Leptovasi - Full message LC0
+2024-07-08 23:00:00.257 [io-compute-blocker-1 ] TRACE leptovasi.Leptovasi - Handling message LC0
+2024-07-08 23:00:00.257 [io-compute-blocker-1 ] DEBUG leptovasi.Leptovasi - Updating current layer to Base
