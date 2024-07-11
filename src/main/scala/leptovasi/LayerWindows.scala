@@ -1,6 +1,6 @@
 package leptovasi
 
-import cats.effect.{IO, Ref, Resource}
+import cats.effect.{Deferred, IO, Ref, Resource}
 import cats.syntax.option.*
 import fs2.Stream
 import fs2.io.file.{Files, Path}
@@ -30,23 +30,28 @@ extension (layerAppRef: LayerWindows)
             oldLayerApps = layerApp(oldLayer) - windowName
             newLayerApps = layerApp.getOrElse(layer, Set.empty) + windowName
             _           <- layerAppRef.update(_ + (oldLayer -> oldLayerApps) + (layer -> newLayerApps))
+            _           <- save
           yield layer
         case None           =>
           for
             _ <- Logger[IO].info(s"Adding $windowName to $layer")
             _ <- layerAppRef.update(_.updatedWith(layer)(_.fold(Set(windowName))(_ + windowName).some))
+            _ <- save
           yield layer
     }
 
-  def save(path: Path): IO[Unit] =
-    Stream
-      .eval(layerAppRef.get)
-      .map(_.asJson.spaces2)
-      .through(Files[IO].writeUtf8(path))
-      .compile
-      .drain
+  def save: IO[Unit] =
+    LayerWindows.applications.get.flatMap { path =>
+      Stream
+        .eval(layerAppRef.get)
+        .map(_.asJson.spaces2)
+        .through(Files[IO].writeUtf8(path))
+        .compile
+        .drain
+    }
 
 object LayerWindows:
+  val applications: Deferred[IO, Path]               = Deferred.unsafe
   private def fromFile(path: Path): IO[LayerWindows] =
     Files[IO]
       .exists(path)
@@ -64,4 +69,4 @@ object LayerWindows:
 
   def resource(filename: String): Resource[IO, LayerWindows] =
     val path = Path(filename)
-    Resource.make(fromFile(path))(_.save(path))
+    Resource.make(fromFile(path))(_.save).preAllocate(applications.complete(path))
