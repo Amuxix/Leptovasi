@@ -9,4 +9,5 @@ user.sbt
 *.worksheet.sc
 .idea
 /**/application.conf
-.log
+*.log
+*.json
