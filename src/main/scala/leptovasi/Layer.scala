@@ -1,14 +1,15 @@
 package leptovasi
 
-import io.circe.{Decoder, Encoder, KeyDecoder, KeyEncoder}
-import pureconfig.ConfigReader
+enum LayerType:
+  case Base, Special, Momentary
 
-enum Layer:
-  case Base, CanaryGaming, QwertyGaming, QwertyShiftedGaming
-
-object Layer:
-  given ConfigReader[Layer] = ConfigReader[Int].map(Layer.fromOrdinal)
-  given Encoder[Layer]      = Encoder[String].contramap(_.toString)
-  given Decoder[Layer]      = Decoder[String].map(Layer.valueOf)
-  given KeyEncoder[Layer]   = KeyEncoder[String].contramap(_.toString)
-  given KeyDecoder[Layer]   = KeyDecoder[String].map(Layer.valueOf)
+enum Layer(val `type`: LayerType):
+  case Base                extends Layer(LayerType.Base)
+  case CanaryGaming        extends Layer(LayerType.Base)
+  case QwertyGaming        extends Layer(LayerType.Base)
+  case QwertyShiftedGaming extends Layer(LayerType.Base)
+  case SpaceBackspaceSwap  extends Layer(LayerType.Special)
+  case KeypadAndSymbols    extends Layer(LayerType.Momentary)
+  case ExtraSymbols        extends Layer(LayerType.Momentary)
+  case Movement            extends Layer(LayerType.Momentary)
+  case Shortcuts           extends Layer(LayerType.Momentary)

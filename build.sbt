@@ -1,6 +1,6 @@
 name := "Leptovasi"
 
-ThisBuild / scalaVersion := "3.4.2"
+ThisBuild / scalaVersion := "3.6.2"
 
 // Used for scala fix
 ThisBuild / semanticdbEnabled := true
