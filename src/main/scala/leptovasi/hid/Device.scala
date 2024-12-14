@@ -1,7 +1,6 @@
 package leptovasi.hid
 
 import leptovasi.HIDConfiguration
-import leptovasi.cleanString
 
 import cats.data.OptionT
 import cats.effect.{IO, Resource}
@@ -24,7 +23,19 @@ class Device(val device: JavaHidDevice):
         }
     }*/
 
-  def write(message: String)(using Logger[IO]): IO[Unit] =
+  def write(bytes: Array[Byte])(using Logger[IO]): IO[Unit] =
+    for
+      _ <- IO.whenA(bytes.length > 32)(Logger[IO].error("Tooo many bytes, can only wirte 32 bytes at most!"))
+      _ <- IO.blocking(device.write(bytes, 32, 0x00, true))
+    yield ()
+
+  def read(timeout: FiniteDuration): OptionT[IO, Array[Byte]] = OptionT {
+    IO.blocking(device.read(32, timeout.toMillis.toInt).map(_.toByte))
+      .attempt
+      .map(_.toOption)
+  }
+
+/*  def write(message: String)(using Logger[IO]): IO[Unit] =
     val bytes = message.toCharArray.map(_.toByte)
     for
       _ <- IO.whenA(bytes.length > 32)(Logger[IO].error(s"$message too large, can only be 32 bytes at most!"))
@@ -36,7 +47,7 @@ class Device(val device: JavaHidDevice):
       .map(string => Option.unless(string.isBlank)(string))
       .attempt
       .map(_.toOption.flatten)
-  }
+  }*/
 
 object Device:
   def resource(device: JavaHidDevice): Resource[IO, Device] =

@@ -2,42 +2,43 @@ package leptovasi
 
 import cats.effect.{Deferred, IO, Ref, Resource}
 import cats.syntax.option.*
+import cats.syntax.show.*
 import fs2.Stream
 import fs2.io.file.{Files, Path}
 import io.circe.parser.parse
 import io.circe.syntax.*
 import org.typelevel.log4cats.Logger
 
-opaque type LayerWindows = Ref[IO, Map[Layer, Set[String]]]
+opaque type LayerWindows = Ref[IO, Map[LayerStack, Set[String]]]
 
 extension (layerAppRef: LayerWindows)
-  def findLayer(windowName: String, defaultLayer: Layer)(using Logger[IO]): IO[Layer] =
+  def findLayerStack(windowName: String, defaultStack: LayerStack)(using Logger[IO]): IO[LayerStack] =
     layerAppRef.get.flatMap { layerApp =>
       layerApp.collectFirst {
-        case (layer, appNames) if appNames.contains(windowName) => layer
-      }.fold(layerAppRef.setWindowLayer(windowName, defaultLayer))(IO.pure)
+        case (layerStack, appNames) if appNames.contains(windowName) => layerStack
+      }.fold(layerAppRef.setWindowLayerStack(windowName, defaultStack))(IO.pure)
     }
 
-  def setWindowLayer(windowName: String, layer: Layer)(using Logger[IO]): IO[Layer] =
+  def setWindowLayerStack(windowName: String, layerStack: LayerStack)(using Logger[IO]): IO[LayerStack] =
     layerAppRef.get.flatMap { layerApp =>
       layerApp.collectFirst {
-        case (layer, windowNames) if windowNames.contains(windowName) => layer
+        case (layerStack, windowNames) if windowNames.contains(windowName) => layerStack
       } match
-        case Some(`layer`)  => IO.pure(layer) // Window already on given layer
-        case Some(oldLayer) =>
+        case Some(`layerStack`)  => IO.pure(layerStack) // Window already on given layer stack
+        case Some(oldLayerStack) =>
           for
-            _           <- Logger[IO].info(s"Changing $windowName from $oldLayer to $layer")
-            oldLayerApps = layerApp(oldLayer) - windowName
-            newLayerApps = layerApp.getOrElse(layer, Set.empty) + windowName
-            _           <- layerAppRef.update(_ + (oldLayer -> oldLayerApps) + (layer -> newLayerApps))
+            _           <- Logger[IO].info(show"Changing $windowName from $oldLayerStack to $layerStack")
+            oldLayerApps = layerApp(oldLayerStack) - windowName
+            newLayerApps = layerApp.getOrElse(layerStack, Set.empty) + windowName
+            _           <- layerAppRef.update(_ + (oldLayerStack -> oldLayerApps) + (layerStack -> newLayerApps))
             _           <- save
-          yield layer
-        case None           =>
+          yield layerStack
+        case None                =>
           for
-            _ <- Logger[IO].info(s"Adding $windowName to $layer")
-            _ <- layerAppRef.update(_.updatedWith(layer)(_.fold(Set(windowName))(_ + windowName).some))
+            _ <- Logger[IO].info(show"Adding $windowName to $layerStack")
+            _ <- layerAppRef.update(_.updatedWith(layerStack)(_.fold(Set(windowName))(_ + windowName).some))
             _ <- save
-          yield layer
+          yield layerStack
     }
 
   def save: IO[Unit] =
@@ -56,17 +57,17 @@ object LayerWindows:
     Files[IO]
       .exists(path)
       .flatMap {
-        case false => IO.pure(Map.empty[Layer, Set[String]])
+        case false => IO.pure(Map.empty[LayerStack, Set[String]])
         case true  =>
           Files[IO]
             .readUtf8(path)
             .compile
             .toList
             .flatMap(lines => IO.fromEither(parse(lines.mkString)))
-            .flatMap(json => IO.fromEither(json.as[Map[Layer, Set[String]]]))
+            .flatMap(json => IO.fromEither(json.as[Map[LayerStack, Set[String]]]))
       }
-      .flatMap(Ref.of[IO, Map[Layer, Set[String]]])
+      .flatMap(Ref.of[IO, Map[LayerStack, Set[String]]])
 
   def resource(filename: String): Resource[IO, LayerWindows] =
     val path = Path(filename)
-    Resource.make(fromFile(path))(_.save).preAllocate(applications.complete(path))
+    Resource.make(fromFile(path))(_.save).preAllocate(applications.complete(path).void)
